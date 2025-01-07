@@ -32,6 +32,8 @@ public class PlayerController {
     //update
     @PutMapping("/{id}")
     public Player updatePlayer(@PathVariable Long id, @RequestBody Player player){
+
+
         return playerServices.updatePlayer(id, player);
     }
     //delete

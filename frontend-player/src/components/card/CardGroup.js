@@ -2,12 +2,25 @@
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/esm/ListGroupItem';
 import Button from 'react-bootstrap/Button';
+import Player from '../player/Player'
+import { useNavigate } from 'react-router-dom';
 
 const CardGroup = ({players}) => {
+    const navigate = useNavigate();
+    
+    //This sends player data directly to the /player route without relying on useState.
+    const handleUpdate =(player) =>{
+        navigate('/player', {state: {player}})
+       
+
+    }
+    
+
+    
 
   return (
     <>
@@ -31,7 +44,7 @@ const CardGroup = ({players}) => {
                             <ListGroupItem>PTS: {player.pts}</ListGroupItem>
                         </ListGroup>
 
-                        <Button >Update Player</Button>
+                        <Button onClick={()=>handleUpdate(player)} >Update Player</Button>
 
                         
 

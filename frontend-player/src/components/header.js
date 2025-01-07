@@ -36,9 +36,7 @@ const Header = ({onSearch, players, onTeamSelect})=> {
 
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                <Nav.Link href="#home">Home</Nav.Link>
-                
+              <Nav className="me-auto">               
                 <Dropdown data-bs-theme="dark" >
                   <Dropdown.Toggle variant="secondary">
                     Select Teams
@@ -64,7 +62,7 @@ const Header = ({onSearch, players, onTeamSelect})=> {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleSearch}
-                style={{ padding: '10px',  width: '300px', marginRight:'5%', marginBottom:'0.5%' }}
+                style={{ padding: '10px',  width: '300px', marginRight:'5%', marginBottom:'0.25%' }}
              />
 
 
