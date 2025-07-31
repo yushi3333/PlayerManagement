@@ -1,78 +1,169 @@
-// import { useDispatch } from 'react-redux';
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import Button from "react-bootstrap/Button";
-// import {NavLink} from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
-import React, {useState}from 'react'
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import Dropdown from 'react-bootstrap/Dropdown';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faBasketball} from "@fortawesome/free-solid-svg-icons" ;
-const Header = ({onSearch, players, onTeamSelect})=> {
-    const navigate = useNavigate();
-    const [searchTerm, setSearchTerm] = useState("");
-    const handleSearch= (e)=>{
-        if (e.key === "Enter"){
-            if (searchTerm.trim()){
-            onSearch(searchTerm);
-            navigate("/players")
+import React, { useState } from 'react';
+import { Navbar, Nav, Container, Form, Button, Dropdown, Badge } from 'react-bootstrap';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faBasketballBall, faChartBar, faUsers, faHome } from '@fortawesome/free-solid-svg-icons';
+import './header.css';
 
-            }
-        }
-    
+const Header = ({ onSearch, players, onTeamSelect, selectedTeam, searchTerm, teams }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchValue, setSearchValue] = useState(searchTerm || '');
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    onSearch(searchValue);
+    if (location.pathname !== '/players') {
+      navigate('/players');
     }
-    const uniqueTeams = [...new Set(players.map(player=>player.team))];
+  };
 
-    return (
-        <Navbar bg='dark' variant='dark' expand="lg" >
-          <Container fluid>
-            <Navbar.Brand href="/" >
-            <FontAwesomeIcon icon={faBasketball} style={{"color": 'gold'}} />
-              Player Management
-            </Navbar.Brand>
+  const handleSearchChange = (e) => {
+    setSearchValue(e.target.value);
+    onSearch(e.target.value);
+  };
 
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">               
-                <Dropdown data-bs-theme="dark" >
-                  <Dropdown.Toggle variant="secondary">
-                    Select Teams
+  const getUniqueTeams = () => {
+    const teamNames = [...new Set(players.map(player => player.team))];
+    return teamNames.sort();
+  };
 
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={()=>onTeamSelect("All Teams")}>
-                      All Teams
-                    </Dropdown.Item>
-                    {uniqueTeams.map((team, index)=>(
-                      <Dropdown.Item key={index} onClick={()=>onTeamSelect(team)}>
-                        {team}
+  const getTeamLogo = (teamName) => {
+    return teams[teamName]?.logo || null;
+  };
 
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
+  const getTeamColor = (teamName) => {
+    return teams[teamName]?.color || '#6c757d';
+  };
 
-                </Dropdown>
-              </Nav>
-              <input
-                type="text"
-                placeholder="Search by player name..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={handleSearch}
-                style={{ padding: '10px',  width: '300px', marginRight:'5%', marginBottom:'0.25%' }}
-             />
+  return (
+    <Navbar bg="dark" variant="dark" expand="lg" className="header-navbar">
+      <Container fluid>
+        <Navbar.Brand 
+          onClick={() => navigate('/')} 
+          className="brand-logo"
+          style={{ cursor: 'pointer' }}
+        >
+          <FontAwesomeIcon icon={faBasketballBall} className="me-2" />
+          NBA Player Management
+        </Navbar.Brand>
 
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link 
+              onClick={() => navigate('/')}
+              className={location.pathname === '/' ? 'active' : ''}
+            >
+              <FontAwesomeIcon icon={faHome} className="me-1" />
+              Home
+            </Nav.Link>
+            <Nav.Link 
+              onClick={() => navigate('/dashboard')}
+              className={location.pathname === '/dashboard' ? 'active' : ''}
+            >
+              <FontAwesomeIcon icon={faChartBar} className="me-1" />
+              Dashboard
+            </Nav.Link>
+            <Nav.Link 
+              onClick={() => navigate('/players')}
+              className={location.pathname === '/players' ? 'active' : ''}
+            >
+              <FontAwesomeIcon icon={faUsers} className="me-1" />
+              Players
+            </Nav.Link>
+            <Nav.Link 
+              onClick={() => navigate('/team-stats')}
+              className={location.pathname === '/team-stats' ? 'active' : ''}
+            >
+              <FontAwesomeIcon icon={faChartBar} className="me-1" />
+              Team Stats
+            </Nav.Link>
+          </Nav>
 
+          <div className="d-flex align-items-center gap-3">
+            {/* Team Filter */}
+            <Dropdown>
+              <Dropdown.Toggle 
+                variant="outline-light" 
+                id="dropdown-team"
+                className="team-dropdown"
+              >
+                {selectedTeam === 'All Teams' ? (
+                  <>
+                    <FontAwesomeIcon icon={faBasketballBall} className="me-2" />
+                    All Teams
+                  </>
+                ) : (
+                  <>
+                    <img 
+                      src={getTeamLogo(selectedTeam)} 
+                      alt={selectedTeam}
+                      className="team-logo-small me-2"
+                      style={{ width: '20px', height: '20px' }}
+                    />
+                    {selectedTeam}
+                  </>
+                )}
+              </Dropdown.Toggle>
 
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-      );
+              <Dropdown.Menu className="team-dropdown-menu">
+                <Dropdown.Item 
+                  onClick={() => onTeamSelect('All Teams')}
+                  className={selectedTeam === 'All Teams' ? 'active' : ''}
+                >
+                  <FontAwesomeIcon icon={faBasketballBall} className="me-2" />
+                  All Teams
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                {getUniqueTeams().map((team) => (
+                  <Dropdown.Item 
+                    key={team}
+                    onClick={() => onTeamSelect(team)}
+                    className={selectedTeam === team ? 'active' : ''}
+                  >
+                    <div className="d-flex align-items-center">
+                      <img 
+                        src={getTeamLogo(team)} 
+                        alt={team}
+                        className="team-logo-small me-2"
+                        style={{ width: '20px', height: '20px' }}
+                      />
+                      <span>{team}</span>
+                    </div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
 
+            {/* Search Form */}
+            <Form onSubmit={handleSearchSubmit} className="d-flex">
+              <Form.Control
+                type="search"
+                placeholder="Search players or teams..."
+                className="me-2 search-input"
+                value={searchValue}
+                onChange={handleSearchChange}
+                style={{ minWidth: '250px' }}
+              />
+              <Button 
+                type="submit" 
+                variant="outline-light"
+                className="search-button"
+              >
+                <FontAwesomeIcon icon={faSearch} />
+              </Button>
+            </Form>
 
-}
+            {/* Player Count Badge */}
+            <Badge bg="primary" className="player-count">
+              {players.length} Players
+            </Badge>
+          </div>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
+};
 
 export default Header;
