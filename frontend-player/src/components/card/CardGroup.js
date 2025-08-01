@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, Col, Row, Button, Badge, Spinner, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faEye, faBasketballBall, faChartLine, faStar, faTrophy } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faBasketballBall, faChartLine, faStar, faTrophy, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import './CardGroup.css';
 
@@ -62,7 +62,7 @@ const CardGroup = ({ players, teams, loading }) => {
       {label}
       {sortBy === field && (
         <FontAwesomeIcon 
-          icon={sortOrder === 'asc' ? 'sort-up' : 'sort-down'} 
+          icon={sortOrder === 'asc' ? faSortUp : faSortDown} 
           className="ms-1" 
         />
       )}

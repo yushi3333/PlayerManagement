@@ -7,7 +7,7 @@ import java.util.List;
 
 //Create a REST controller to expose the CRUD operations via HTTP.
 
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 @RestController
 @RequestMapping("/api/players")
 public class PlayerController {

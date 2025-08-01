@@ -1,12 +1,46 @@
 import React, { useState, useMemo } from 'react';
 import { Container, Row, Col, Card, Table, Badge, ProgressBar, Button, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrophy, faBasketballBall, faChartLine, faStar, faUsers, faMedal } from '@fortawesome/free-solid-svg-icons';
+import { faTrophy, faBasketballBall, faChartLine, faStar, faUsers, faMedal, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
 import './TeamStats.css';
 
 const TeamStats = ({ players, teams }) => {
   const [selectedMetric, setSelectedMetric] = useState('avgPoints');
   const [sortOrder, setSortOrder] = useState('desc');
+
+  // Team abbreviation to full name mapping
+  const teamAbbreviationMap = {
+    'ATL': 'Atlanta Hawks',
+    'BOS': 'Boston Celtics',
+    'BKN': 'Brooklyn Nets',
+    'CHA': 'Charlotte Hornets',
+    'CHI': 'Chicago Bulls',
+    'CLE': 'Cleveland Cavaliers',
+    'DAL': 'Dallas Mavericks',
+    'DEN': 'Denver Nuggets',
+    'DET': 'Detroit Pistons',
+    'GSW': 'Golden State Warriors',
+    'HOU': 'Houston Rockets',
+    'IND': 'Indiana Pacers',
+    'LAC': 'LA Clippers',
+    'LAL': 'Los Angeles Lakers',
+    'MEM': 'Memphis Grizzlies',
+    'MIA': 'Miami Heat',
+    'MIL': 'Milwaukee Bucks',
+    'MIN': 'Minnesota Timberwolves',
+    'NOP': 'New Orleans Pelicans',
+    'NYK': 'New York Knicks',
+    'OKC': 'Oklahoma City Thunder',
+    'ORL': 'Orlando Magic',
+    'PHI': 'Philadelphia 76ers',
+    'PHX': 'Phoenix Suns',
+    'POR': 'Portland Trail Blazers',
+    'SAC': 'Sacramento Kings',
+    'SAS': 'San Antonio Spurs',
+    'TOR': 'Toronto Raptors',
+    'UTA': 'Utah Jazz',
+    'WAS': 'Washington Wizards'
+  };
 
   // Calculate team statistics
   const teamStats = useMemo(() => {
@@ -41,19 +75,20 @@ const TeamStats = ({ players, teams }) => {
 
     // Calculate totals
     players.forEach(player => {
-      if (stats[player.team]) {
-        stats[player.team].players++;
-        stats[player.team].totalPoints += player.pts;
-        stats[player.team].totalRebounds += player.reb;
-        stats[player.team].totalAssists += player.ast;
-        stats[player.team].totalSteals += player.stl;
-        stats[player.team].totalBlocks += player.blk;
-        stats[player.team].totalTurnovers += player.tov;
-        stats[player.team].totalEfficiency += player.eff;
+      const fullTeamName = teamAbbreviationMap[player.team];
+      if (fullTeamName && stats[fullTeamName]) {
+        stats[fullTeamName].players++;
+        stats[fullTeamName].totalPoints += player.pts;
+        stats[fullTeamName].totalRebounds += player.reb;
+        stats[fullTeamName].totalAssists += player.ast;
+        stats[fullTeamName].totalSteals += player.stl;
+        stats[fullTeamName].totalBlocks += player.blk;
+        stats[fullTeamName].totalTurnovers += player.tov;
+        stats[fullTeamName].totalEfficiency += player.eff;
 
         // Track best player
-        if (!stats[player.team].bestPlayer || player.pts > stats[player.team].bestPlayer.pts) {
-          stats[player.team].bestPlayer = player;
+        if (!stats[fullTeamName].bestPlayer || player.pts > stats[fullTeamName].bestPlayer.pts) {
+          stats[fullTeamName].bestPlayer = player;
         }
       }
     });
@@ -315,7 +350,7 @@ const TeamStats = ({ players, teams }) => {
                       onClick={() => setSortOrder('desc')}
                       className="me-2"
                     >
-                      <FontAwesomeIcon icon="sort-down" className="me-1" />
+                      <FontAwesomeIcon icon={faSortDown} className="me-1" />
                       Desc
                     </Button>
                     <Button
@@ -323,7 +358,7 @@ const TeamStats = ({ players, teams }) => {
                       size="sm"
                       onClick={() => setSortOrder('asc')}
                     >
-                      <FontAwesomeIcon icon="sort-up" className="me-1" />
+                      <FontAwesomeIcon icon={faSortUp} className="me-1" />
                       Asc
                     </Button>
                   </div>
