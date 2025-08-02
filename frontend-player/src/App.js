@@ -12,6 +12,9 @@ import Home from './components/home/Home';
 import Player from './components/player/Player';
 import Dashboard from './components/dashboard/Dashboard';
 import TeamStats from './components/team/TeamStats';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import { initializeSampleData } from './components/DataInitializer';
 
 // NBA Team data with logos and colors
 const NBA_TEAMS = {
@@ -175,12 +178,22 @@ function App() {
   const [selectedTeam, setSelectedTeam] = useState('All Teams');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const [stats, setStats] = useState({
     totalPlayers: 0,
     avgPoints: 0,
     avgRebounds: 0,
     avgAssists: 0
   });
+
+  // 检查用户登录状态
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
+    if (userData && token) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
   const handleSearch = (searchTerm) => {
     setSearchTerm(searchTerm);
@@ -233,7 +246,18 @@ function App() {
       }
     };
 
-    fetchPlayers();
+    // 初始化示例数据并获取球员数据
+    const initializeData = async () => {
+      try {
+        await initializeSampleData();
+        await fetchPlayers();
+      } catch (error) {
+        console.error('Error initializing data:', error);
+        await fetchPlayers(); // 即使初始化失败也要获取现有数据
+      }
+    };
+
+    initializeData();
   }, []);
 
   return (
@@ -245,6 +269,7 @@ function App() {
         selectedTeam={selectedTeam}
         searchTerm={searchTerm}
         teams={NBA_TEAMS}
+        user={user}
       />
 
       <Routes>
@@ -255,6 +280,8 @@ function App() {
         <Route path='/players' element={<CardGroup players={filteredPlayers} teams={NBA_TEAMS} loading={loading} />} />
         <Route path='/player' element={<Player />} />
         <Route path='/team-stats' element={<TeamStats players={players} teams={NBA_TEAMS} />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
       </Routes>
     </div>
   );

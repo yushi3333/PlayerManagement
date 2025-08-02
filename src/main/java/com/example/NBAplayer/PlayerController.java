@@ -1,6 +1,7 @@
 package com.example.NBAplayer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,37 +15,48 @@ public class PlayerController {
     @Autowired
     private PlayerServices playerServices;
 
+    // 公开访问 - 所有用户都可以查看球员信息
     @GetMapping
     public List<Player> getPlayers() {
         return playerServices.getAllPlayers();
     }
 
+    // 公开访问 - 所有用户都可以查看单个球员信息
     @GetMapping("/{id}")
     public Player getPlayById(@PathVariable Long id){
         return playerServices.getPlayerById(id).orElse(null);
     }
 
-    //create player
+    // 需要管理员权限 - 创建球员
     @PostMapping()
-    public Player createPlayer(@RequestBody Player player){
-        return playerServices.createPlayer(player);
+    public ResponseEntity<Player> createPlayer(@RequestBody Player player){
+        try {
+            Player createdPlayer = playerServices.createPlayer(player);
+            return ResponseEntity.ok(createdPlayer);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
-    //update
+    
+    // 需要管理员权限 - 更新球员
     @PutMapping("/{id}")
-    public Player updatePlayer(@PathVariable Long id, @RequestBody Player player){
-
-
-        return playerServices.updatePlayer(id, player);
+    public ResponseEntity<Player> updatePlayer(@PathVariable Long id, @RequestBody Player player){
+        try {
+            Player updatedPlayer = playerServices.updatePlayer(id, player);
+            return ResponseEntity.ok(updatedPlayer);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
-    //delete
+    
+    // 需要管理员权限 - 删除球员
     @DeleteMapping("/{id}")
-    public void deletePlayer(@PathVariable Long id){
-        playerServices.deletePlayer(id);
+    public ResponseEntity<?> deletePlayer(@PathVariable Long id){
+        try {
+            playerServices.deletePlayer(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
-
-
-
-
-
-
 }

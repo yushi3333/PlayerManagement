@@ -8,39 +8,7 @@ const TeamStats = ({ players, teams }) => {
   const [selectedMetric, setSelectedMetric] = useState('avgPoints');
   const [sortOrder, setSortOrder] = useState('desc');
 
-  // Team abbreviation to full name mapping
-  const teamAbbreviationMap = {
-    'ATL': 'Atlanta Hawks',
-    'BOS': 'Boston Celtics',
-    'BKN': 'Brooklyn Nets',
-    'CHA': 'Charlotte Hornets',
-    'CHI': 'Chicago Bulls',
-    'CLE': 'Cleveland Cavaliers',
-    'DAL': 'Dallas Mavericks',
-    'DEN': 'Denver Nuggets',
-    'DET': 'Detroit Pistons',
-    'GSW': 'Golden State Warriors',
-    'HOU': 'Houston Rockets',
-    'IND': 'Indiana Pacers',
-    'LAC': 'LA Clippers',
-    'LAL': 'Los Angeles Lakers',
-    'MEM': 'Memphis Grizzlies',
-    'MIA': 'Miami Heat',
-    'MIL': 'Milwaukee Bucks',
-    'MIN': 'Minnesota Timberwolves',
-    'NOP': 'New Orleans Pelicans',
-    'NYK': 'New York Knicks',
-    'OKC': 'Oklahoma City Thunder',
-    'ORL': 'Orlando Magic',
-    'PHI': 'Philadelphia 76ers',
-    'PHX': 'Phoenix Suns',
-    'POR': 'Portland Trail Blazers',
-    'SAC': 'Sacramento Kings',
-    'SAS': 'San Antonio Spurs',
-    'TOR': 'Toronto Raptors',
-    'UTA': 'Utah Jazz',
-    'WAS': 'Washington Wizards'
-  };
+
 
   // Calculate team statistics
   const teamStats = useMemo(() => {
@@ -75,20 +43,20 @@ const TeamStats = ({ players, teams }) => {
 
     // Calculate totals
     players.forEach(player => {
-      const fullTeamName = teamAbbreviationMap[player.team];
-      if (fullTeamName && stats[fullTeamName]) {
-        stats[fullTeamName].players++;
-        stats[fullTeamName].totalPoints += player.pts;
-        stats[fullTeamName].totalRebounds += player.reb;
-        stats[fullTeamName].totalAssists += player.ast;
-        stats[fullTeamName].totalSteals += player.stl;
-        stats[fullTeamName].totalBlocks += player.blk;
-        stats[fullTeamName].totalTurnovers += player.tov;
-        stats[fullTeamName].totalEfficiency += player.eff;
+      const teamName = player.team;
+      if (teamName && stats[teamName]) {
+        stats[teamName].players++;
+        stats[teamName].totalPoints += player.pts;
+        stats[teamName].totalRebounds += player.reb;
+        stats[teamName].totalAssists += player.ast;
+        stats[teamName].totalSteals += player.stl;
+        stats[teamName].totalBlocks += player.blk;
+        stats[teamName].totalTurnovers += player.tov;
+        stats[teamName].totalEfficiency += player.eff;
 
         // Track best player
-        if (!stats[fullTeamName].bestPlayer || player.pts > stats[fullTeamName].bestPlayer.pts) {
-          stats[fullTeamName].bestPlayer = player;
+        if (!stats[teamName].bestPlayer || player.pts > stats[teamName].bestPlayer.pts) {
+          stats[teamName].bestPlayer = player;
         }
       }
     });
@@ -262,11 +230,36 @@ const TeamStats = ({ players, teams }) => {
     );
   };
 
+
+
   if (!players || players.length === 0) {
     return (
       <Alert variant="info" className="no-data-alert">
         <Alert.Heading>No Data Available</Alert.Heading>
         <p>No player data is available to display team statistics.</p>
+      </Alert>
+    );
+  }
+
+  if (!teams || Object.keys(teams).length === 0) {
+    return (
+      <Alert variant="warning" className="no-data-alert">
+        <Alert.Heading>No Team Data</Alert.Heading>
+        <p>Team configuration data is missing.</p>
+      </Alert>
+    );
+  }
+
+  if (teamStats.length === 0) {
+    return (
+      <Alert variant="warning" className="no-data-alert">
+        <Alert.Heading>No Team Statistics</Alert.Heading>
+        <p>Unable to calculate team statistics. Please check the data.</p>
+        <hr />
+        <p><strong>Debug Info:</strong></p>
+        <p>Players: {players.length}</p>
+        <p>Teams: {Object.keys(teams).length}</p>
+        <p>Sample player teams: {players.slice(0, 5).map(p => p.team).join(', ')}</p>
       </Alert>
     );
   }

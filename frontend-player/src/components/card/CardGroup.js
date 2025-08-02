@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Col, Row, Button, Badge, Spinner, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faEye, faBasketballBall, faChartLine, faStar, faTrophy, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +10,18 @@ const CardGroup = ({ players, teams, loading }) => {
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // 检查用户权限
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const userObj = JSON.parse(userData);
+      setUser(userObj);
+      setIsAdmin(userObj.role === 'ADMIN');
+    }
+  }, []);
 
   const handleUpdate = (player) => {
     navigate('/player', { state: { player } });
@@ -126,19 +138,23 @@ const CardGroup = ({ players, teams, loading }) => {
             <div className="player-header">
               <h5 className="player-name">{player.name}</h5>
               <div className="player-actions">
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  onClick={() => handleUpdate(player)}
-                  className="action-btn"
-                >
-                  <FontAwesomeIcon icon={faEdit} />
-                </Button>
+                {isAdmin && (
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    onClick={() => handleUpdate(player)}
+                    className="action-btn"
+                    title="编辑球员信息"
+                  >
+                    <FontAwesomeIcon icon={faEdit} />
+                  </Button>
+                )}
                 <Button
                   variant="outline-info"
                   size="sm"
                   onClick={() => handleUpdate(player)}
                   className="action-btn"
+                  title="查看球员详情"
                 >
                   <FontAwesomeIcon icon={faEye} />
                 </Button>

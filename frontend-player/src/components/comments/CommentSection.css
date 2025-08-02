@@ -1,0 +1,91 @@
+.comment-section {
+  margin-top: 20px;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comment-section .card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e1e5e9;
+  font-weight: 600;
+  color: #495057;
+}
+
+.comment-item {
+  border: none;
+  border-bottom: 1px solid #f1f3f4;
+  padding: 15px 0;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-content {
+  color: #333;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.comment-item .btn-outline-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.comment-item .btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-primary {
+  background-color: #667eea;
+  border-color: #667eea;
+}
+
+.btn-primary:hover {
+  background-color: #5a6fd8;
+  border-color: #5a6fd8;
+}
+
+.btn-primary:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.badge {
+  font-size: 10px;
+  padding: 4px 6px;
+}
+
+.text-muted a {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.text-muted a:hover {
+  text-decoration: underline;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .comment-section {
+    margin-top: 15px;
+  }
+  
+  .comment-item {
+    padding: 10px 0;
+  }
+  
+  .comment-content {
+    font-size: 14px;
+  }
+} 

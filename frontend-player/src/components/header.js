@@ -1,14 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar, Nav, Container, Form, Button, Dropdown, Badge } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faBasketballBall, faChartBar, faUsers, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBasketballBall, faChartBar, faUsers, faHome, faUser, faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import './header.css';
 
 const Header = ({ onSearch, players, onTeamSelect, selectedTeam, searchTerm, teams }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchValue, setSearchValue] = useState(searchTerm || '');
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/');
+  };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -159,6 +174,47 @@ const Header = ({ onSearch, players, onTeamSelect, selectedTeam, searchTerm, tea
             <Badge bg="primary" className="player-count">
               {players.length} Players
             </Badge>
+
+            {/* User Authentication */}
+            {user ? (
+              <Dropdown>
+                <Dropdown.Toggle variant="outline-light" id="dropdown-user">
+                  <FontAwesomeIcon icon={faUser} className="me-2" />
+                  {user.username}
+                  <Badge bg={user.role === 'ADMIN' ? 'danger' : 'success'} className="ms-2">
+                    {user.role}
+                  </Badge>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item disabled>
+                    <small>角色: {user.role}</small>
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item onClick={handleLogout}>
+                    <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
+                    退出登录
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            ) : (
+              <div className="d-flex gap-2">
+                <Button 
+                  variant="outline-light" 
+                  size="sm"
+                  onClick={() => navigate('/login')}
+                >
+                  <FontAwesomeIcon icon={faSignInAlt} className="me-1" />
+                  登录
+                </Button>
+                <Button 
+                  variant="light" 
+                  size="sm"
+                  onClick={() => navigate('/register')}
+                >
+                  注册
+                </Button>
+              </div>
+            )}
           </div>
         </Navbar.Collapse>
       </Container>
